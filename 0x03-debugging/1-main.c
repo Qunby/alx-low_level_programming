@@ -1,10 +1,10 @@
 #include <stdio.h>
 
 /**
- * main - Entry point
- * causes an infinite loop
+ * main - causes an infinite loop
  * Return: Always 0 (Success)
  */
+
 int main(void)
 {
 	int i;
@@ -22,3 +22,4 @@ int main(void)
 
 	return (0);
 }
+
