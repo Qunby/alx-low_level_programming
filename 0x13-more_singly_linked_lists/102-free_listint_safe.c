@@ -1,38 +1,65 @@
 #include "lists.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 /**
- * free_listint_safe - function to free list
- * @h: pointer to the pointer of the list
- * Return: count
+ * _ra - reallocates memory for an array of pointers
+ * to the nodes in a linked list
+ * @list: the old list to append
+ * @size: size of the new list (always one more than the old list)
+ * @new: new node to add to the list
+ *
+ * Return: pointer to the new list
  */
-size_t free_listint_safe(listint_t **h)
+listint_t **_ra(listint_t **list, size_t size, listint_t *new)
 {
-	size_t count_new = 0, count_comp = 0;
-	listint_t *tmp, *head, *comp;
+	listint_t **newlist;
+	size_t i;
 
-	if (h == NULL || *h == NULL)
-		return (0);
-	head = comp = tmp = *h;
-	count_new = 0;
-	while (head != NULL)
+	newlist = malloc(size * sizeof(listint_t *));
+	if (newlist == NULL)
 	{
-		comp = *h;
-		count_comp = 0;
-		while (count_new > count_comp)
-		{
-			if (tmp == comp)
-			{
-				*h = NULL;
-				return (count_new);
-			}
-			count_comp++;
-			comp = comp->next;
-		}
-		count_new++;
-		tmp = head->next;
-		free((void *)head);
-		head = tmp;
+		free(list);
+		exit(98);
 	}
-	*h = tmp;
-	return (count_new);
+	for (i = 0; i < size - 1; i++)
+		newlist[i] = list[i];
+	newlist[i] = new;
+	free(list);
+	return (newlist);
+}
+
+/**
+ * free_listint_safe - frees a listint_t linked list.
+ * @head: double pointer to the start of the list
+ *
+ * Return: the number of nodes in the list
+ */
+size_t free_listint_safe(listint_t **head)
+{
+	size_t i, num = 0;
+	listint_t **list = NULL;
+	listint_t *next;
+
+	if (head == NULL || *head == NULL)
+		return (num);
+	while (*head != NULL)
+	{
+		for (i = 0; i < num; i++)
+		{
+			if (*head == list[i])
+			{
+				*head = NULL;
+				free(list);
+				return (num);
+			}
+		}
+		num++;
+		list = _ra(list, num, *head);
+		next = (*head)->next;
+		free(*head);
+		*head = next;
+	}
+	free(list);
+	return (num);
 }
